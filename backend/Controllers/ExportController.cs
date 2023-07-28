@@ -1,4 +1,5 @@
 ﻿using backend.Context;
+using backend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -97,5 +98,20 @@ namespace backend.Controllers
 				return new JsonResult(databases);
 			}
 		}
+
+		[HttpPost("api/connectDB")]
+		public IActionResult ConectareBazaDeDate([FromBody] DatabaseSelectionModel model)
+		{
+			string numeBazaDeDate = model.NumeBazaDeDate;
+			Console.WriteLine(numeBazaDeDate);
+			// Aici poți folosi numele bazei de date pentru a realiza conexiunea cu baza de date.
+			// Poți utiliza un ORM (Object-Relational Mapping) sau alte metode specifice ASP.NET pentru conectarea la baza de date.
+
+			// Întoarce un răspuns către frontend (dacă este necesar).
+			return Ok(new { message = "Conectare cu succes la baza de date!" });
+		}
+
 	}
 }
+
+
