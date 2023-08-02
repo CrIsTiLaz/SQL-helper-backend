@@ -6,9 +6,16 @@ namespace backend.Context
 {
 	public class ApplicationDbContext : DbContext
 	{
+		private readonly string _numeBazaDeDate;
+
+		public ApplicationDbContext(string numeBazaDeDate)
+		{
+			_numeBazaDeDate = numeBazaDeDate;
+		}
+
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseSqlServer("Server=.;Database=Books;Trusted_Connection=true;TrustServerCertificate=true;");
+			optionsBuilder.UseSqlServer("Server=.;Database={_numeBazaDeDate};Trusted_Connection=true;TrustServerCertificate=true;");
 		}
 	}
 }
