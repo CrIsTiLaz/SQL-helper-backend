@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 
@@ -15,7 +16,8 @@ namespace backend.Context
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseSqlServer("Server=.;Database={_numeBazaDeDate};Trusted_Connection=true;TrustServerCertificate=true;");
+			
+			optionsBuilder.UseSqlServer($"Server=.;Database={_numeBazaDeDate};Trusted_Connection=true;TrustServerCertificate=true;");
 		}
 	}
 }
