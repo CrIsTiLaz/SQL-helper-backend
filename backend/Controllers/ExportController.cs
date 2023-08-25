@@ -10,6 +10,7 @@ using System;
 using System.Data;
 using System.Dynamic;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Newtonsoft.Json;
 
 namespace backend.Controllers
 {
@@ -17,6 +18,8 @@ namespace backend.Controllers
     [ApiController]
     public class ExportController : Controller
 	{
+		private string _currentDatabaseName;
+
 		[Route("api/exportDatabases")]
 		[HttpGet]
 		public IActionResult GetAllDatabases()
@@ -52,37 +55,21 @@ namespace backend.Controllers
 		[HttpPost]
 		public IActionResult ConectareBazaDeDate([FromBody] DatabaseSelectionModel model)
 		{
-			
-			// Aici poți folosi numele bazei de date pentru a realiza conexiunea cu baza de date.
-			// Poți utiliza un ORM (Object-Relational Mapping) sau alte metode specifice ASP.NET pentru conectarea la baza de date.
-
-			// Întoarce un răspuns către frontend (dacă este necesar).
-			//return Ok(new { message = "Conectare cu succes la baza de date!" });
 			return Ok(new { message = "Conectare cu succes la baza de date!" });
 		}
-
-
-		//public string GetNumeFromUrl()
-		//{
-		//	// Obțineți URL-ul cererii curente
-		//	string currentUrl = HttpContext.Request.Path.Value;
-
-		//	// Extrageți numele din URL
-		//	string nume = currentUrl.Split('/').Last();
-
-		//	// Utilizați numele după cum doriți
-
-		//	// Puteți returna o vedere care să utilizeze numele
-		//	return nume;
-		//}
-
 
 		[Route("api/export")]
 		[HttpGet]
 		public IActionResult ExportAllTablesToJson([FromQuery] DatabaseSelectionModel parameters)
 		{
 			string query = parameters.NumeBazaDeDate;
+			_currentDatabaseName = query;
+			
+			var sessionId = HttpContext.Session.Id;
+			HttpContext.Session.SetString("DatabaseName", query); // Stocați databaseName în sesiune
 
+			string databaseName = HttpContext.Session.GetString("DatabaseName"); // Recuperați databaseName din sesiune
+			Console.WriteLine(databaseName);
 			if (string.IsNullOrEmpty(query))
 			{
 				return BadRequest("Numele bazei de date nu a fost furnizat.");
@@ -143,9 +130,56 @@ namespace backend.Controllers
 			}
 		}
 
+		[Route("api/exportQuery")]
+		[HttpPost]
+		public IActionResult ExecuteSqlQuery([FromBody] SqlQueryModel model)
+		{
+			var sessionId = HttpContext.Session.Id;
+			string databaseName = HttpContext.Session.GetString("DatabaseName"); // Recuperați databaseName din sesiune
+			var dbName = model.DatabaseName;
+			Console.WriteLine(model.Query);
+			Console.WriteLine(databaseName);
+
+			try
+			{
+				string connectionString = $"Server=.;Database={dbName};Trusted_Connection=true;TrustServerCertificate=true;";
+
+				using (SqlConnection connection = new SqlConnection(connectionString))
+				{
+					connection.Open();
+
+					using (SqlCommand command = new SqlCommand(model.Query, connection))
+					{
+						DataTable dataTable = new DataTable();
+						using (SqlDataReader reader = command.ExecuteReader())
+						{
+							dataTable.Load(reader);
+						}
+
+						// Convertim DataTable la JSON
+						string jsonResult = JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+						Console.WriteLine(jsonResult);
+
+						// Returnăm rezultatul ca JSON
+						return Content(jsonResult, "application/json");
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+
 
 
 	}
 }
 
+public class SqlQueryModel
+{
+	public string Query { get; set; }
+	public string DatabaseName { get; set; }
+}
 
