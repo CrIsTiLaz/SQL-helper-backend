@@ -11,6 +11,7 @@ using System.Data;
 using System.Dynamic;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace backend.Controllers
 {
@@ -171,8 +172,57 @@ namespace backend.Controllers
 			}
 		}
 
+		[Route("api/importToTable")]
+		[HttpPost]
+		public IActionResult ImportDataToTable([FromForm] string databaseName, [FromForm] string tableName, [FromForm] IFormFile file)
+		{
+			Console.WriteLine(databaseName);
+			//string BaseConnectionString = "Server=.;Database={databaseName};Trusted_Connection=true;TrustServerCertificate=true;";
 
+			if (string.IsNullOrEmpty(databaseName) || string.IsNullOrEmpty(tableName) || file == null)
+			{
+				return BadRequest("Numele bazei de date, numele tabelei și fișierul sunt necesare.");
+			}
 
+			List<Dictionary<string, object>> parsedData;
+			using (var memoryStream = new MemoryStream())
+			{
+				file.CopyTo(memoryStream);
+				memoryStream.Position = 0;
+
+				using (var reader = new StreamReader(memoryStream))
+				{
+					var content = reader.ReadToEnd();
+					parsedData = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(content);
+				}
+			}
+
+			// După parsare, conectează-te la baza de date și inserează datele
+			string connectionString = $"Server=.;Database={databaseName};Trusted_Connection=true;TrustServerCertificate=true;";
+
+			using (SqlConnection connection = new SqlConnection(connectionString))
+			{
+				connection.Open();
+
+				foreach (var row in parsedData)
+				{
+					string columns = string.Join(", ", row.Keys);
+					string values = string.Join(", ", row.Keys.Select(k => "@" + k));
+					string commandText = $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
+
+					using (SqlCommand cmd = new SqlCommand(commandText, connection))
+					{
+						foreach (var kvp in row)
+						{
+							cmd.Parameters.AddWithValue("@" + kvp.Key, kvp.Value);
+						}
+						cmd.ExecuteNonQuery();
+					}
+				}
+			}
+
+			return Ok(new { message = "Datele au fost importate cu succes." });
+		}
 
 	}
 }
@@ -183,3 +233,10 @@ public class SqlQueryModel
 	public string DatabaseName { get; set; }
 }
 
+public class TableImportModel
+{
+	[Required]
+	public string TableName { get; set; }
+	[Required]
+	public IFormFile File { get; set; }
+}
