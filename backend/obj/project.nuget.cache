@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "1fJ5za6VszDpVfbmfXZ6hFiS7pb6lefma0QJFGz96nD0JpKjPBp6ttV8BvYpk4Dlgdtq9KPDYGHs6XSkCzobsQ==",
+  "dgSpecHash": "7DChdE2ERqu5g2Xlu69nDaGY4JCXZbBoscycrkvGKyOy73nYPk6tNj2zNOiu0sVPx2bYd0uhn//52NXK4vaohw==",
   "success": true,
   "projectFilePath": "D:\\learn\\licentaBackend\\backend\\backend\\backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\crist\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\crist\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
+    "C:\\Users\\crist\\.nuget\\packages\\csvhelper\\30.0.1\\csvhelper.30.0.1.nupkg.sha512",
     "C:\\Users\\crist\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\crist\\.nuget\\packages\\microsoft.aspnetcore.antiforgery\\2.2.0\\microsoft.aspnetcore.antiforgery.2.2.0.nupkg.sha512",
     "C:\\Users\\crist\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

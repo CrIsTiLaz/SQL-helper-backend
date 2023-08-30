@@ -77,3 +77,4 @@ D:\learn\licentaBackend\backend\backend\obj\Debug\net7.0\backend.genruntimeconfi
 D:\learn\licentaBackend\backend\backend\obj\Debug\net7.0\ref\backend.dll
 D:\learn\licentaBackend\backend\backend\bin\Debug\net7.0\Microsoft.AspNetCore.JsonPatch.dll
 D:\learn\licentaBackend\backend\backend\bin\Debug\net7.0\Newtonsoft.Json.Bson.dll
+D:\learn\licentaBackend\backend\backend\bin\Debug\net7.0\CsvHelper.dll
